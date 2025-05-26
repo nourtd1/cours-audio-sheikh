@@ -1,17 +1,20 @@
 // screens/AudioPlayerScreen.js
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import { Text, Button, ProgressBar, IconButton, Card } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import i18n from '../utils/i18n';
+import { LanguageContext } from '../App';
 
 const STORAGE_KEY = 'AUDIO_PLAYER_POSITION';
 
 const AudioPlayerScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+  const { locale } = useContext(LanguageContext);
   const { course } = route.params || {};
   const soundRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -98,6 +101,10 @@ const AudioPlayerScreen = () => {
     }
   }, [course?.title]);
 
+  useEffect(() => {
+    navigation.setOptions({ title: i18n.t('audio.title') });
+  }, [locale, navigation]);
+
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(500)}>
       <Card style={styles.card} accessible accessibilityLabel={course?.title}>
@@ -110,25 +117,25 @@ const AudioPlayerScreen = () => {
           icon="rewind-10"
           size={36}
           onPress={() => handleSeek(-10000)}
-          accessibilityLabel={i18n.t('rewind_10s') || 'Reculer 10 secondes'}
+          accessibilityLabel={i18n.t('audio.rewind_10s') || 'Reculer 10 secondes'}
         />
         <IconButton
           icon={isPlaying ? 'pause' : 'play'}
           size={48}
           onPress={handlePlayPause}
-          accessibilityLabel={isPlaying ? i18n.t('pause') || 'Pause' : i18n.t('play') || 'Lecture'}
+          accessibilityLabel={isPlaying ? i18n.t('audio.pause') || 'Pause' : i18n.t('audio.play') || 'Lecture'}
           disabled={loading}
         />
         <IconButton
           icon="fast-forward-10"
           size={36}
           onPress={() => handleSeek(10000)}
-          accessibilityLabel={i18n.t('forward_10s') || 'Avancer 10 secondes'}
+          accessibilityLabel={i18n.t('audio.forward_10s') || 'Avancer 10 secondes'}
         />
       </View>
       <TouchableOpacity
         accessible
-        accessibilityLabel={i18n.t('progress_bar') || 'Barre de progression'}
+        accessibilityLabel={i18n.t('audio.progress_bar') || 'Barre de progression'}
         accessibilityRole="adjustable"
         style={styles.progressContainer}
         onPress={async (e) => {
@@ -145,7 +152,7 @@ const AudioPlayerScreen = () => {
         <View style={styles.timeRow}>
           <Text style={styles.time}>{formatMillis(position)}</Text>
           <Text style={styles.time}>{formatMillis(duration)}</Text>
-  </View>
+        </View>
       </TouchableOpacity>
     </Animated.View>
   );

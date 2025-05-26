@@ -1,80 +1,65 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
-import { Card, Button, Text } from 'react-native-paper';
+import { View, Text, StyleSheet, TouchableOpacity, I18nManager, Image } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const CourseItem = ({
-  title,
-  category,
-  theme,
-  date,
-  onPlay,
-  onDownload,
-}) => {
+export default function CourseItem({ title, number, isFavorite, onFavoritePress, onPress }) {
   return (
-    <Card style={styles.card} accessible accessibilityLabel={`${title}, ${category}, ${theme}, ${date}`}>
-      <Card.Content style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.meta}>{category} • {theme}</Text>
-        <Text style={styles.date}>{date}</Text>
-      </Card.Content>
-      <Card.Actions style={styles.actions}>
-        <Button
-          mode="contained"
-          onPress={onPlay}
-          accessibilityLabel="Jouer le cours"
-        >
-          Jouer
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={onDownload}
-          style={styles.downloadBtn}
-          accessibilityLabel="Télécharger le cours"
-        >
-          Télécharger
-        </Button>
-      </Card.Actions>
-    </Card>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+      <View style={styles.row}>
+        <TouchableOpacity onPress={onFavoritePress} style={styles.heartBtn} hitSlop={{top:10,bottom:10,left:10,right:10}}>
+          <MaterialCommunityIcons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={28}
+            color="#a11d2a"
+          />
+        </TouchableOpacity>
+        <Text style={styles.title} numberOfLines={2}>{title}</Text>
+        <View style={styles.badge}>
+          {/* Si tu as un motif décoratif, ajoute-le ici, par exemple :
+          <Image source={require('../assets/badge-decor.png')} style={styles.badgeDecor} />
+          */}
+          <Text style={styles.badgeText}>{number}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 8,
-    marginHorizontal: 16,
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
-  content: {
-    flex: 1,
-  },
+  row: { flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row', alignItems: 'center' },
+  heartBtn: { marginHorizontal: 6 },
   title: {
+    flex: 1,
     fontSize: 18,
-    fontWeight: 'bold',
+    color: '#222',
     textAlign: I18nManager.isRTL ? 'right' : 'left',
+    fontFamily: 'Amiri',
+    marginHorizontal: 8,
   },
-  meta: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
-  },
-  date: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 2,
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
-  },
-  actions: {
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
-    justifyContent: 'flex-end',
+  badge: {
+    backgroundColor: '#f3e9e9',
+    borderRadius: 18,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
-    marginBottom: 8,
+    marginHorizontal: 4,
+    borderWidth: 2,
+    borderColor: '#a11d2a',
+    overflow: 'hidden',
   },
-  downloadBtn: {
-    marginLeft: I18nManager.isRTL ? 0 : 8,
-    marginRight: I18nManager.isRTL ? 8 : 0,
-  },
-});
-
-export default CourseItem; 
+  badgeText: { color: '#a11d2a', fontSize: 16, fontWeight: 'bold', fontFamily: 'Amiri' },
+  // badgeDecor: { ... }, // à définir si tu ajoutes un motif décoratif SVG ou PNG
+}); 

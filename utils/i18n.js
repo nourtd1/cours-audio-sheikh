@@ -12,9 +12,13 @@ const i18n = new I18n({
   ar,
 });
 
-i18n.locale = Localization.locale || 'fr';
+i18n.locale = Localization.locale?.split('-')[0] || 'fr';
 i18n.enableFallback = true;
+
+i18n.setLocale = (locale) => {
+  i18n.locale = locale;
+};
 
 console.log('i18n instance:', i18n);
 
-export default i18n;
+export default i18n; 

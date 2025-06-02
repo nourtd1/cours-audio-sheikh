@@ -21,6 +21,7 @@ import PolicyScreen from './screens/PolicyScreen';
 import TasbihScreen from './screens/TasbihScreen';
 import AllahNamesScreen from './screens/AllahNamesScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AudioListScreen from './screens/AudioListScreen';
 
 export const LanguageContext = React.createContext();
 
@@ -108,38 +109,6 @@ export default function App() {
     });
   }, []);
 
-  // Ajout du bouton sur l'écran Home
-  const HomeWithNotif = (props) => (
-    <>
-      <HomeScreen {...props} />
-      <PaperButton
-        mode="contained"
-        style={{ margin: 16, alignSelf: 'center' }}
-        onPress={sendTestNotification}
-        accessibilityLabel="Envoyer une notification locale de test"
-        icon="bell"
-      >
-        Envoyer une notification de test
-      </PaperButton>
-      <PaperButton
-        mode={reminderActive ? 'outlined' : 'contained'}
-        style={{ margin: 8, alignSelf: 'center' }}
-        onPress={reminderActive ? disableDailyReminder : enableDailyReminder}
-        accessibilityLabel={reminderActive ? 'Désactiver le rappel quotidien' : 'Activer le rappel quotidien'}
-        icon={reminderActive ? 'bell-off' : 'bell'}
-      >
-        {reminderActive ? 'Désactiver le rappel quotidien' : 'Activer le rappel quotidien à 20h'}
-      </PaperButton>
-      <PaperButton
-        mode="text"
-        style={{ alignSelf: 'center' }}
-        disabled
-      >
-        {reminderActive ? 'Rappel quotidien activé' : 'Rappel quotidien désactivé'}
-      </PaperButton>
-    </>
-  );
-
   return (
     <LanguageContext.Provider value={{ locale, changeLanguage }}>
       <PaperProvider theme={theme}>
@@ -152,7 +121,7 @@ export default function App() {
             />
             <Stack.Screen
               name="Home"
-              component={HomeWithNotif}
+              component={HomeScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -215,6 +184,7 @@ export default function App() {
             <Stack.Screen name="Policy" component={PolicyScreen} options={{ title: 'سياسة التطبيق' }} />
             <Stack.Screen name="Tasbih" component={TasbihScreen} options={{ title: 'عدد التسبيحات' }} />
             <Stack.Screen name="AllahNames" component={AllahNamesScreen} options={{ title: 'أسماء الله الحسنى' }} />
+            <Stack.Screen name="AudioList" component={AudioListScreen} options={{ title: 'Cours audio (CDN)' }} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

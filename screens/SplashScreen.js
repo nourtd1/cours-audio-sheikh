@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     marginBottom: 8,
-    tintColor: '#333',
   },
   bottomText: {
     fontSize: 16,

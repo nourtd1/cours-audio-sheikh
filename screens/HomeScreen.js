@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Text, Image, ImageBackground, StyleSheet, TouchableOpacity, I18nManager, Linking } from 'react-native';
+import { View, Text, Image, ImageBackground, StyleSheet, TouchableOpacity, I18nManager, Linking, Modal, Pressable, Share } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const buttons = [
   {
     icon: require('../assets/music-placeholder.png'),
     label: 'محاضرات',
     sub: 'بدون نت',
-    onPress: (nav) => nav.navigate('Courses'),
+    onPress: (nav) => nav.navigate('AudioList'),
   },
   {
     icon: require('../assets/favorite-placeholder.png'),
@@ -43,6 +44,34 @@ const buttons = [
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const [notifMenuVisible, setNotifMenuVisible] = React.useState(false);
+
+  // Fonctions fictives pour les actions de notification
+  const sendTestNotification = () => {
+    setNotifMenuVisible(false);
+    // Ajoute ici la logique réelle si besoin
+    alert('Notification de test envoyée !');
+  };
+  const activateDailyReminder = () => {
+    setNotifMenuVisible(false);
+    // Ajoute ici la logique réelle si besoin
+    alert('Rappel quotidien activé à 20h !');
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: "Découvre cette super application ! https://play.google.com/store/apps/details?id=ton.package"
+      });
+    } catch (error) {
+      alert('Erreur lors du partage');
+    }
+  };
+
+  const handleInfo = () => {
+    navigation.navigate('Policy');
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -50,15 +79,40 @@ export default function HomeScreen() {
         style={styles.background}
         resizeMode="cover"
       >
-        {/* Top right buttons */}
-        <View style={styles.topRightRow}>
-          <TouchableOpacity style={styles.topIconBtn}>
-            <Image source={require('../assets/share-placeholder.png')} style={styles.topIcon} />
+        {/* Top row */}
+        <View style={styles.topRow}>
+          <TouchableOpacity style={styles.topIconBtn} onPress={() => setNotifMenuVisible(true)}>
+            <MaterialCommunityIcons name="bell-outline" size={28} color="#333" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.topIconBtn}>
-            <Image source={require('../assets/info-placeholder.png')} style={styles.topIcon} />
-          </TouchableOpacity>
+          <View style={styles.topRightRow}>
+            <TouchableOpacity style={styles.topIconBtn} onPress={handleShare}>
+              <Image source={require('../assets/share-placeholder.png')} style={styles.topIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.topIconBtn} onPress={handleInfo}>
+              <Image source={require('../assets/info-placeholder.png')} style={styles.topIcon} />
+            </TouchableOpacity>
+          </View>
         </View>
+        {/* Modal pour le menu notifications */}
+        <Modal
+          visible={notifMenuVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setNotifMenuVisible(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setNotifMenuVisible(false)}>
+            <View style={styles.notifMenu}>
+              <TouchableOpacity style={styles.notifMenuBtn} onPress={sendTestNotification}>
+                <MaterialCommunityIcons name="bell-ring-outline" size={22} color="#1976d2" />
+                <Text style={styles.notifMenuText}>Envoyer une notification de test</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.notifMenuBtn} onPress={activateDailyReminder}>
+                <MaterialCommunityIcons name="clock-outline" size={22} color="#1976d2" />
+                <Text style={styles.notifMenuText}>Activer le rappel quotidien à 20h</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
         {/* Central avatar */}
         <View style={styles.centerAvatarWrapper}>
           <Image source={require('../assets/avatar-frame-placeholder.png')} style={styles.avatarFrame} />
@@ -100,10 +154,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  topRightRow: {
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     position: 'absolute',
     top: 36,
+    left: 24,
     right: 24,
     zIndex: 2,
   },
@@ -115,10 +172,13 @@ const styles = StyleSheet.create({
     padding: 8,
     elevation: 2,
   },
+  topRightRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   topIcon: {
     width: 28,
     height: 28,
-    tintColor: '#333',
   },
   centerAvatarWrapper: {
     alignItems: 'center',
@@ -162,7 +222,6 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     marginBottom: 8,
-    tintColor: '#333',
   },
   gridLabel: {
     fontSize: 18,
@@ -195,7 +254,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     marginRight: 12,
-    tintColor: '#333',
   },
   bigBtnText: {
     fontSize: 20,
@@ -218,6 +276,37 @@ const styles = StyleSheet.create({
   bannerText: {
     color: '#888',
     fontSize: 14,
+    fontFamily: 'Amiri',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+  },
+  notifMenu: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    marginTop: 60,
+    marginRight: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    elevation: 6,
+    minWidth: 220,
+    shadowColor: '#000',
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  notifMenuBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  notifMenuText: {
+    fontSize: 15,
+    color: '#222',
+    marginLeft: 10,
     fontFamily: 'Amiri',
   },
 }); 

@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function WebViewScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>موقعنا (WebView)</Text>
+      <WebView
+        source={{ uri: 'https://www.wikipedia.org' }}
+        style={{ flex: 1 }}
+        startInLoadingState
+      />
     </View>
   );
 }

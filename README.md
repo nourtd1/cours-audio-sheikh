@@ -1,25 +1,25 @@
 # الشيخ أحمد النور محمد الحلوا — Application Mobile
 
-Application mobile multiplateforme (Android & iOS) pour écouter les cours audio et lire le livre PDF du Sheikh Ahmad Nour Mohammad Al-Halwa.
+Application mobile multiplateforme (Android & iOS) pour écouter les cours audio (hébergés sur GitHub) et lire/rechercher dans le livre du Sheikh Ahmad Nour Mohammad Al-Halwa.
 
 ## Fonctionnalités principales
 
-- **Liste des cours audio** : Parcours, recherche, lecture et téléchargement des cours.
+- **Liste des cours audio** : Parcours, recherche, lecture (streaming via GitHub/jsDelivr) et téléchargement des cours.
 - **Lecteur audio** : Streaming, contrôle de la lecture, avance/retour rapide, lecture en arrière-plan.
-- **Visualiseur PDF** : Lecture, zoom, recherche, navigation par chapitres, sauvegarde de la progression.
+- **Lecture et recherche dans le livre** : Recherche plein texte, navigation par chapitres, surlignage, sauvegarde de la progression (remplace l'ancien visualiseur PDF).
 - **Recherche avancée** : Recherche par mots-clés, filtres par catégorie ou date.
-- **Téléchargement hors ligne** : Accès aux cours et au livre PDF sans connexion.
+- **Téléchargement hors ligne** : Accès aux cours et au livre sans connexion.
 - **Support multilingue** : Interface en arabe (RTL), français et anglais, avec bascule de langue.
 
 ## Technologies utilisées
 
 - **React Native** avec **Expo** (Android & iOS)
 - **Firebase** (Cloud Storage & Firestore)
+- **GitHub + jsDelivr** (hébergement des fichiers audio)
 - **react-navigation** (navigation entre écrans)
 - **react-native-paper** (UI)
 - **i18n-js** (traductions multilingues)
 - **expo-av** (audio)
-- **react-native-pdf** (PDF)
 - **expo-file-system**, **@react-native-async-storage/async-storage** (stockage local)
 - **expo-notifications** (notifications push)
 - **react-native-reanimated** (animations)
@@ -28,11 +28,12 @@ Application mobile multiplateforme (Android & iOS) pour écouter les cours audio
 ## Structure du projet
 
 ```
-/assets/           # Images, icônes, polices
+/assets/           # Images, icônes, polices, données du livre (book.json)
 /components/       # Composants réutilisables (CourseItem, AudioControls, etc.)
 /locales/          # Fichiers de traduction (ar.js, fr.js, en.js)
-/screens/          # Écrans principaux (HomeScreen, CourseListScreen, etc.)
-/utils/            # Fonctions utilitaires (Firebase, audio, PDF, etc.)
+/screens/          # Écrans principaux (HomeScreen, CourseListScreen, AudioListScreen, BookSearchScreen, BookReaderScreen, etc.)
+/utils/            # Fonctions utilitaires (Firebase, audio, livre, etc.)
+audioFiles.json    # Liste des fichiers audio (liens GitHub/jsDelivr)
 App.js             # Point d'entrée de l'application
 firebaseConfig.js  # Configuration Firebase
 ```
@@ -66,14 +67,14 @@ firebaseConfig.js  # Configuration Firebase
 - **Android & iOS** : Testé via Expo Go sur Samsung et iPhone.
 - **Accessibilité** : Compatible VoiceOver (iOS) et TalkBack (Android).
 - **Multilingue** : Bascule de langue dans les paramètres, support RTL pour l'arabe.
-- **Offline** : Tester le téléchargement et l'accès hors ligne aux contenus.
+- **Offline** : Tester le téléchargement et l'accès hors ligne aux contenus (audio et livre).
 
 ## Contraintes & Bonnes pratiques
 
 - **Design épuré** : Couleurs sobres (blanc, vert islamique, gris).
 - **Navigation intuitive** : Stack ou tabs via react-navigation.
 - **Accessibilité** : Labels clairs, contraste élevé, navigation simplifiée.
-- **Aucune logique backend** : Uniquement intégration du SDK Firebase.
+- **Aucune logique backend** : Uniquement intégration du SDK Firebase et accès aux fichiers via GitHub.
 
 ## Dépendances principales
 
@@ -83,7 +84,6 @@ firebaseConfig.js  # Configuration Firebase
 - react-native-paper
 - i18n-js
 - expo-av
-- react-native-pdf
 - expo-file-system
 - @react-native-async-storage/async-storage
 - expo-notifications
@@ -92,5 +92,7 @@ firebaseConfig.js  # Configuration Firebase
 
 ## Remarques
 
+- Les fichiers audio sont hébergés sur GitHub et accessibles via jsDelivr (voir `audioFiles.json`).
+- Le livre est stocké sous forme de fichier JSON et consultable/recherchable via l'écran BookSearchScreen.
 - Toute la logique backend (stockage, notifications, etc.) est gérée par une autre équipe.
 - L'application est destinée aux fidèles, étudiants en sciences islamiques, et toute personne intéressée par les enseignements du Sheikh. 

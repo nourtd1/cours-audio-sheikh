@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function CourseItem({ title, number, isFavorite, onFavoritePress, onPress }) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.92}>
       <View style={styles.row}>
         <TouchableOpacity onPress={onFavoritePress} style={styles.heartBtn} hitSlop={{top:10,bottom:10,left:10,right:10}}>
           <MaterialCommunityIcons
@@ -14,10 +14,7 @@ export default function CourseItem({ title, number, isFavorite, onFavoritePress,
           />
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={2}>{title}</Text>
-        <View style={styles.badge}>
-          {/* Si tu as un motif décoratif, ajoute-le ici, par exemple :
-          <Image source={require('../assets/badge-decor.png')} style={styles.badgeDecor} />
-          */}
+        <View style={styles.badgeWrapper}>
           <Text style={styles.badgeText}>{number}</Text>
         </View>
       </View>
@@ -28,38 +25,42 @@ export default function CourseItem({ title, number, isFavorite, onFavoritePress,
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 14,
+    borderRadius: 18,
+    paddingVertical: 16,
     paddingHorizontal: 12,
-    marginBottom: 14,
+    marginBottom: 18,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
+    shadowOpacity: 0.10,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
   },
-  row: { flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row', alignItems: 'center' },
+  row: { flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row', alignItems: 'center', justifyContent: 'space-between' },
   heartBtn: { marginHorizontal: 6 },
   title: {
     flex: 1,
     fontSize: 18,
     color: '#222',
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    textAlign: 'center',
     fontFamily: 'Amiri',
     marginHorizontal: 8,
   },
-  badge: {
+  badgeWrapper: {
     backgroundColor: '#f3e9e9',
-    borderRadius: 18,
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
+    borderRadius: 22,
+    width: 44,
+    height: 44,
     alignItems: 'center',
-    marginHorizontal: 4,
+    justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#a11d2a',
     overflow: 'hidden',
   },
-  badgeText: { color: '#a11d2a', fontSize: 16, fontWeight: 'bold', fontFamily: 'Amiri' },
-  // badgeDecor: { ... }, // à définir si tu ajoutes un motif décoratif SVG ou PNG
+  badgeText: {
+    color: '#a11d2a',
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'Amiri',
+    zIndex: 2,
+  },
 }); 

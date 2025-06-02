@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar, Button } from 'react-native-paper';
 import { LanguageContext } from '../App';
 import * as Notifications from 'expo-notifications';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const FAVORITES_KEY = 'COURSE_FAVORITES';
 const DOWNLOADED_AUDIOS_KEY = 'DOWNLOADED_AUDIOS';
@@ -150,7 +151,9 @@ const CourseListScreen = () => {
   const canLoadMore = paginatedCourses.length < filteredCourses.length;
 
   return (
+    <LinearGradient colors={["#e0eafc", "#cfdef3", "#f8fafc"]} start={{x:0.2,y:0}} end={{x:1,y:1}} style={{flex:1}}>
     <View style={styles.container}>
+        <Text style={styles.title}>قائمة المحاضرات</Text>
       <View style={styles.topRow}>
         <Button
           mode={showOnlyFav ? 'contained' : 'outlined'}
@@ -167,6 +170,7 @@ const CourseListScreen = () => {
           data={filteredCourses}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
+              <View style={styles.cardWrapper}>
             <CourseItem
               title={item.titre}
               number={index + 1}
@@ -174,19 +178,11 @@ const CourseListScreen = () => {
               onFavoritePress={() => handleToggleFavorite(item)}
               onPress={() => handlePlay(item)}
             />
+              </View>
           )}
-          contentContainerStyle={{ paddingBottom: 80 }}
+            contentContainerStyle={{ paddingBottom: 32, paddingTop: 8 }}
         />
       </Animated.View>
-      <View style={styles.adBanner}>
-        <View style={styles.adBannerInner}>
-          <View style={{ flex: 1 }} />
-          <View>
-            <View style={styles.adBadge}><Text style={styles.adBadgeText}>Ad</Text></View>
-          </View>
-        </View>
-        <Text style={styles.adText}>مساحة الوحدة الإعلانية المحجوزة</Text>
-      </View>
       <Snackbar
         visible={snackbar.visible}
         onDismiss={() => setSnackbar({ ...snackbar, visible: false })}
@@ -194,12 +190,18 @@ const CourseListScreen = () => {
       >
         {snackbar.message}
       </Snackbar>
+        <View style={styles.adBanner}>
+          <Text style={styles.adText}>مساحة الوحدة الإعلانية المحجوزة</Text>
+        </View>
     </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f6f6f6', padding: 12 },
+  container: { flex: 1, padding: 12, backgroundColor: '#e5e5e5' },
+  title: { fontSize: 26, fontFamily: 'Amiri', color: '#222', marginBottom: 18, textAlign: 'center', letterSpacing: 1 },
+  cardWrapper: { marginBottom: 18 },
   topRow: {
     flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
@@ -222,23 +224,9 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     paddingHorizontal: 12,
   },
-  adBannerInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
-    height: 24,
-    paddingHorizontal: 8,
-  },
-  adBadge: {
-    backgroundColor: '#ffd600',
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginLeft: 8,
-  },
-  adBadgeText: { color: '#333', fontWeight: 'bold', fontSize: 12 },
+  adBannerInner: { display: 'none' },
+  adBadge: { display: 'none' },
+  adBadgeText: { display: 'none' },
   adText: { color: '#aaa', textAlign: 'center', fontSize: 13, marginTop: 18 },
 });
 

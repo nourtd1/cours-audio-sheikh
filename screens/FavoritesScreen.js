@@ -146,10 +146,10 @@ export default function FavoritesScreen() {
   return (
     <LinearGradient colors={["#e0eafc", "#cfdef3", "#f8fafc"]} start={{x:0.2,y:0}} end={{x:1,y:1}} style={{flex:1}}>
       <GoldParticles />
-      <View style={styles.container}>
-        <Text style={styles.title}>المفضلة</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>المفضلة</Text>
         <View style={styles.separator} />
-        <FlatList
+      <FlatList
           data={favorites}
           keyExtractor={(item, index) => item.url || item.id || index.toString()}
           renderItem={({ item, index }) => (
@@ -196,10 +196,10 @@ export default function FavoritesScreen() {
                     <Animated.Text entering={BounceIn.duration(700)} style={styles.badgeText}>{index + 1}</Animated.Text>
                   </LinearGradient>
                 </View>
-              </View>
+          </View>
             </Animated.View>
-          )}
-          ListEmptyComponent={<Text style={styles.empty}>لا يوجد عناصر مفضلة</Text>}
+        )}
+        ListEmptyComponent={<Text style={styles.empty}>لا يوجد عناصر مفضلة</Text>}
           contentContainerStyle={{ paddingBottom: 32, paddingTop: 8 }}
         />
         {favorites.length > 0 && (
@@ -211,7 +211,7 @@ export default function FavoritesScreen() {
             </Text>
           </Animated.View>
         )}
-      </View>
+    </View>
     </LinearGradient>
   );
 }

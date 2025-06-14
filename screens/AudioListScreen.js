@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Audio } from 'expo-av';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import audioFiles from '../audioFiles.json';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { audioService } from '../services/audioService';
 
 const FAVORITES_KEY = 'AUDIO_FAVORITES';
 
@@ -17,6 +17,28 @@ const AudioListScreen = () => {
   const [duration, setDuration] = useState(1);
   const progressInterval = useRef(null);
   const [favorites, setFavorites] = useState([]);
+  const [audioFiles, setAudioFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Charger les fichiers audio au démarrage
+  useEffect(() => {
+    loadAudioFiles();
+  }, []);
+
+  const loadAudioFiles = async () => {
+    try {
+      setLoading(true);
+      const files = await audioService.getAllAudioFiles();
+      setAudioFiles(files);
+      setError(null);
+    } catch (err) {
+      setError('Erreur lors du chargement des fichiers audio');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Charger les favoris au démarrage
   React.useEffect(() => {
@@ -152,47 +174,61 @@ const AudioListScreen = () => {
     <LinearGradient colors={["#e0eafc", "#cfdef3", "#f8fafc"]} start={{x:0.2,y:0}} end={{x:1,y:1}} style={{flex:1}}>
       <View style={styles.container}>
         <Text style={styles.title}>قائمة الدروس الصوتية</Text>
-        <FlatList
-          data={audioFiles}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <Animated.View entering={FadeIn.duration(500)} style={styles.cardWrapper}>
-              <View style={styles.itemRow}>
-                <View style={styles.iconCircle}>
-                  <MaterialCommunityIcons name="music" size={24} color="#a11d2a" />
-                </View>
-                <View style={styles.itemContent}>
-                  <TouchableOpacity
-                    style={({ pressed }) => [styles.touchable, pressed && styles.touchablePressed]}
-                    onPress={() =>
-                      currentIndex === index && isPlaying ? pauseAudio() : playAudio(item.url, index)
-                    }
-                    activeOpacity={0.85}
-                  >
-                    <Text style={styles.itemText}>{item.titre}</Text>
-                    <Text style={styles.descText}>{item.description}</Text>
-                    {currentIndex === index && isPlaying && <ActivityIndicator size="small" color="#007AFF" />}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1976d2" />
+            <Text style={styles.loadingText}>Chargement des cours...</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={loadAudioFiles}>
+              <Text style={styles.retryButtonText}>Réessayer</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={audioFiles}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <Animated.View entering={FadeIn.duration(500)} style={styles.cardWrapper}>
+                <View style={styles.itemRow}>
+                  <View style={styles.iconCircle}>
+                    <MaterialCommunityIcons name="music" size={24} color="#a11d2a" />
+                  </View>
+                  <View style={styles.itemContent}>
+                    <TouchableOpacity
+                      style={({ pressed }) => [styles.touchable, pressed && styles.touchablePressed]}
+                      onPress={() =>
+                        currentIndex === index && isPlaying ? pauseAudio() : playAudio(item.url, index)
+                      }
+                      activeOpacity={0.85}
+                    >
+                      <Text style={styles.itemText}>{item.titre}</Text>
+                      <Text style={styles.descText}>{item.description}</Text>
+                      {currentIndex === index && isPlaying && <ActivityIndicator size="small" color="#007AFF" />}
+                    </TouchableOpacity>
+                    {renderControls(index)}
+                    {renderProgress(index)}
+                  </View>
+                  <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavorite(item)}>
+                    <MaterialCommunityIcons
+                      name={favorites.find(f => f.url === item.url) ? 'heart' : 'heart-outline'}
+                      size={28}
+                      color="#a11d2a"
+                    />
                   </TouchableOpacity>
-                  {renderControls(index)}
-                  {renderProgress(index)}
+                  <View style={styles.badgeWrapper}>
+                    <Animated.View style={styles.badgeGradient}>
+                      <Text style={styles.badgeText}>{index + 1}</Text>
+                    </Animated.View>
+                  </View>
                 </View>
-                <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavorite(item)}>
-                  <MaterialCommunityIcons
-                    name={favorites.find(f => f.url === item.url) ? 'heart' : 'heart-outline'}
-                    size={28}
-                    color="#a11d2a"
-                  />
-                </TouchableOpacity>
-                <View style={styles.badgeWrapper}>
-                  <Animated.View style={styles.badgeGradient}>
-                    <Text style={styles.badgeText}>{index + 1}</Text>
-                  </Animated.View>
-                </View>
-              </View>
-            </Animated.View>
-          )}
-          contentContainerStyle={{ paddingBottom: 32, paddingTop: 8 }}
-        />
+              </Animated.View>
+            )}
+            contentContainerStyle={{ paddingBottom: 32, paddingTop: 8 }}
+          />
+        )}
         <View style={styles.adBanner}>
           <Text style={styles.adText}>مساحة الوحدة الإعلانية المحجوزة</Text>
         </View>
@@ -351,6 +387,38 @@ const styles = StyleSheet.create({
     marginRight: 0,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#1976d2',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

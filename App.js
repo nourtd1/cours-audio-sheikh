@@ -22,6 +22,7 @@ import TasbihScreen from './screens/TasbihScreen';
 import AllahNamesScreen from './screens/AllahNamesScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AudioListScreen from './screens/AudioListScreen';
+import TasbihSelectScreen from './screens/TasbihSelectScreen';
 
 export const LanguageContext = React.createContext();
 
@@ -183,6 +184,7 @@ export default function App() {
             <Stack.Screen name="WebView" component={WebViewScreen} options={{ title: 'موقعنا' }} />
             <Stack.Screen name="Policy" component={PolicyScreen} options={{ title: 'سياسة التطبيق' }} />
             <Stack.Screen name="Tasbih" component={TasbihScreen} options={{ title: 'عدد التسبيحات' }} />
+            <Stack.Screen name="TasbihSelect" component={TasbihSelectScreen} options={{ title: 'تغيير الذكر' }} />
             <Stack.Screen name="AllahNames" component={AllahNamesScreen} options={{ title: 'أسماء الله الحسنى' }} />
             <Stack.Screen name="AudioList" component={AudioListScreen} options={{ title: 'Cours audio (CDN)' }} />
           </Stack.Navigator>

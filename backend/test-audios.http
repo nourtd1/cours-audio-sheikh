@@ -1,0 +1,10 @@
+POST http://localhost:4000/api/audios
+Content-Type: application/json
+
+{
+  "title": "Nom de mon premier cours audio",
+  "artist": "Nom du conférencier ou de l'artiste",
+  "url": "https://ondxodxaueszssxywynf.supabase.co/storage/v1/object/public/audio-courses/Khoutba/1.mp3",
+  "duration_seconds": 3600,
+  "size_mb": 25.5
+}
